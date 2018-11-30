@@ -13,14 +13,14 @@ import (
 //	   Timeout: 100*time.Millisecond,
 //     RunAdds: &RunAdds,
 // }
-// g1.AsynRun()
-// defer g1.AsynRun()
+// g1.asynRun()
+// defer g1.asynRun()
 //
 
 type Goloop struct {
-	FnLoop  func()
+	FnLoop  func() (waittimes int) //necessary
+	RunAdds *int32                 //necessary
 	Timeout time.Duration
-	RunAdds *int32
 	chquit  chan int32
 }
 
@@ -30,25 +30,47 @@ func WaitingForRunning(RunAdds *int32) {
 	}
 }
 
-func (g *Goloop) AsynRun() {
+func Go(fn func() int, RunAdds *int32, Timeout time.Duration) *Goloop {
+	glp := &Goloop{
+		FnLoop:  fn,
+		RunAdds: RunAdds,
+		Timeout: Timeout,
+	}
+	go glp.asynRun()
+	return glp
+}
+
+func (g *Goloop) Close() {
+	g.asynEnd()
+}
+
+func (g *Goloop) asynRun() {
 	atomic.AddInt32(g.RunAdds, 1)
 	g.chquit = make(chan int32)
 	go func() {
 		var ret int32
+		if g.Timeout == 0 {
+			g.Timeout = 25
+		}
 	LOOP_OUT:
 		for {
-			g.FnLoop()
+			n := g.FnLoop()
+			if n > 0 {
+				n = n * int(g.Timeout)
+			} else {
+				n = int(g.Timeout)
+			}
 			select {
 			case <-g.chquit:
 				break LOOP_OUT
-			case <-time.After(g.Timeout):
+			case <-time.After(time.Duration(n)):
 			}
 		}
 		g.chquit <- ret
 	}()
 }
 
-func (g *Goloop) AsynEnd() {
+func (g *Goloop) asynEnd() {
 	go func() {
 		g.chquit <- 1
 		<-g.chquit
