@@ -7,6 +7,11 @@ import (
 	"time"
 )
 
+type config struct {
+}
+
+var defCfg = &config{}
+
 func Error(e ...interface{}) {
 	_, file, line, _ := runtime.Caller(1)
 	fmt.Println(filepath.Base(file), line, "{error}", e)
