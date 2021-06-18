@@ -17,19 +17,36 @@ func WaitForEnter(s string) {
 	}
 }
 
+///example
+///
+
+type FnRunner = func()
+
+type LoopGroup struct {
+	sync.WaitGroup
+	mtx   sync.Mutex
+	loops map[string]*loop
+	stops []FnRunner
+}
+
 type loop struct {
 	// fn      func() int //necessary
 	// timeout time.Duration
 	chquit chan int32
 }
 
-type LoopGroup struct {
-	sync.WaitGroup
-	mtx   sync.Mutex
-	loops map[string]*loop
+func (lg *LoopGroup) AddAsyncBlock(fnBlock func(), fnStop func()) {
+	lg.mtx.Lock()
+	defer lg.mtx.Unlock()
+	lg.Add(1)
+	lg.stops = append(lg.stops, fnStop)
+	go func() {
+		defer lg.Done()
+		fnBlock()
+	}()
 }
 
-func (lg *LoopGroup) Go(key string, fn func() int, timeout time.Duration, fnCancel func()) error {
+func (lg *LoopGroup) GoLoop(key string, fn func() int, timeout time.Duration, fnCancel func()) error {
 	lg.mtx.Lock()
 	defer lg.mtx.Unlock()
 	_, ok := lg.loops[key]
@@ -62,7 +79,7 @@ func (lg *LoopGroup) Go(key string, fn func() int, timeout time.Duration, fnCanc
 	return nil
 }
 
-func (lg *LoopGroup) Exit(key string) {
+func (lg *LoopGroup) ExitLoop(key string) {
 	lg.mtx.Lock()
 	defer lg.mtx.Unlock()
 	v, ok := lg.loops[key]
@@ -71,4 +88,25 @@ func (lg *LoopGroup) Exit(key string) {
 	}
 	v.chquit <- 1
 	delete(lg.loops, key)
+}
+
+func (lg *LoopGroup) WaitForEnter(enter string) {
+	WaitForEnter(enter)
+	lg.Wait()
+}
+
+func (lg *LoopGroup) Wait() {
+	lg.mtx.Lock()
+	defer lg.mtx.Unlock()
+	for _, stop := range lg.stops {
+		go stop()
+	}
+	lg.stops = nil
+	for _, v := range lg.loops {
+		go func() {
+			v.chquit <- 1
+		}()
+	}
+	lg.loops = nil
+	lg.WaitGroup.Wait()
 }
