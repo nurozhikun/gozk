@@ -12,11 +12,19 @@ type Error struct {
 	ErrString string
 }
 
-func New(code int, s string) error {
+func NewError(code int, s string) error {
 	err := &Error{Code: code, ErrString: s}
 	_, err.FileName, err.Lines, _ = runtime.Caller(1)
 	// err.FileName = filepath.Base(err.FileName)
 	return err
+}
+
+func ErrorCode(err error) int {
+	e, ok := err.(*Error)
+	if ok {
+		return e.Code
+	}
+	return 0
 }
 
 func (e *Error) Error() string {
