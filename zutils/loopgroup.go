@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"sync"
 	"time"
+
+	"gitee.com/sienectagv/gozk/zlogger"
 )
 
 func WaitForEnter(s string) {
@@ -29,9 +31,13 @@ type LoopGroup struct {
 	stops []FnRunner
 }
 
+func NewLoopGroup() *LoopGroup {
+	return &LoopGroup{
+		loops: make(map[string]*loop),
+	}
+}
+
 type loop struct {
-	// fn      func() int //necessary
-	// timeout time.Duration
 	chquit chan int32
 }
 
@@ -55,6 +61,10 @@ func (lg *LoopGroup) GoLoop(key string, fn func() int, timeout time.Duration, fn
 	}
 	lg.Add(1)
 	l := &loop{chquit: make(chan int32)}
+	// if nil == lg.loops {
+	// 	lg.loops = make(map[string]*loop)
+	// }
+	zlogger.Info(lg.loops)
 	lg.loops[key] = l
 	go func() {
 		if timeout == 0 {
@@ -73,6 +83,9 @@ func (lg *LoopGroup) GoLoop(key string, fn func() int, timeout time.Duration, fn
 				break LOOP_OUT
 			case <-time.After(time.Duration(n)):
 			}
+		}
+		if nil != fnCancel {
+			fnCancel()
 		}
 		lg.Done()
 	}()
