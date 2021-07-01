@@ -12,6 +12,16 @@ type Error struct {
 	ErrString string
 }
 
+const (
+	ErrCodeHasExist = 1 + iota
+	ErrCodeNotFound
+)
+
+var (
+	ErrHasExist = NewError(ErrCodeHasExist, "the value has existed")
+	ErrNotFound = NewError(ErrCodeNotFound, "the value has not found")
+)
+
 func NewError(code int, s string) error {
 	err := &Error{Code: code, ErrString: s}
 	_, err.FileName, err.Lines, _ = runtime.Caller(1)
