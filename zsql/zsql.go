@@ -24,13 +24,6 @@ func (db *DB) StdDB() *sql.DB {
 
 func (db *DB) AddForeignKey(ftable, fkey, rtable, rkey string) (*DB, error) {
 	key := "fk_" + fkey + "_" + rkey
-	// var cont int64
-	// rows, err := db.Exec("SELECT * FROM information_schema.KEY_COLUMN_USAGE where constraint_name = ?", key).Rows()
-	// zlogger.Error(err)
-	// for rows.Next() {
-	// 	cont = cont + 1
-	// }
-	// zlogger.Info(cont)
 	rows, err := db.StdDB().Query("SELECT * FROM information_schema.KEY_COLUMN_USAGE where constraint_name = ?", key)
 	if err == nil {
 		n := 0
