@@ -1,40 +1,72 @@
 package zjwt
 
 import (
-	"time"
 
 	// "github.com/dgrijalva/jwt-go"
+
+	"time"
+
+	"gitee.com/sienectagv/gozk/zutils"
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
-var Secret = "Wuzhikun@2021$zjhz"
+var Secret = []byte("Wuzhikun@2021$zjhz")
+
+var (
+	ErrWrongMethod = zutils.NewError(1, "the method is wrong")
+	ErrInvalid     = zutils.NewError(2, "invalid token")
+	ErrExpired     = zutils.NewError(3, "the token is expired")
+)
 
 type RoleClaims struct {
 	jwt.StandardClaims
-	// User string `json:"use"`
-	// ExpiresAt uint   `json:"exp"` //UTC time
 	RoleIDs []uint `json:"rid"`
 }
 
-// func (c *RoleClaims) Valid() error {
-// 	if len(c.User) > 0 && len(c.RoleIDs) > 0 {
-// 		return nil
-// 	} else {
-// 		return zutils.NewError(1, "invalid in user or roles")
-// 	}
+// func (rc *RoleClaims) Valid() error {
+// 	err := rc.StandardClaims.Valid()
+// 	// zlogger.Error(err)
+// 	return err
 // }
 
-type Takon struct {
-	*jwt.Token
-}
-
-func TokenOfRoles(user, key string, roles []uint) (string, error) {
+func TokenOfRoles(user string, key []byte, roles []uint) (string, error) {
 	claim := &RoleClaims{StandardClaims: jwt.StandardClaims{
-		audience:  user,
-		ExpiresAt: time.Now().Add(3 * time.Hour).Unix(),
+		Audience:  user,
+		ExpiresAt: time.Now().Add(3 * time.Hour).UTC().Unix(),
 	},
 		RoleIDs: roles,
 	}
-	tc := jwt.NewWithClaims(jwt.SigningMethodES256, claim)
-	return tc.SignedString(key)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS384, claim)
+	return token.SignedString(key)
+}
+
+func ParseTokenOfRoles(key []byte, tokenStr string) (user string, roles []uint, err error) {
+	rc := &RoleClaims{}
+	token, err := jwt.ParseWithClaims(tokenStr, rc, func(tk *jwt.Token) (interface{}, error) {
+		if _, ok := tk.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, ErrWrongMethod
+		}
+		return key, nil
+	})
+	if err != nil {
+		return rc.Audience, rc.RoleIDs, err
+	}
+	if !token.Valid {
+		return rc.Audience, rc.RoleIDs, ErrInvalid
+	}
+	//judge ExpiresAt
+	exp := time.Unix(rc.ExpiresAt, 0)
+	if exp.Before(time.Now().UTC()) {
+		return rc.Audience, rc.RoleIDs, ErrExpired
+	}
+	return rc.Audience, rc.RoleIDs, nil
+}
+
+func ParseTokenOfRolesUpExp(key []byte, tokenStr string) (user string, roles []uint, newToken string, err error) {
+	user, roles, err = ParseTokenOfRoles(key, tokenStr)
+	if nil != err {
+		return
+	}
+	newToken, err = TokenOfRoles(user, key, roles)
+	return
 }
