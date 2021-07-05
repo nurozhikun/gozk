@@ -10,6 +10,10 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
+const (
+	JwtHeader = "Authorization"
+)
+
 var Secret = []byte("Wuzhikun@2021$zjhz")
 
 var (
