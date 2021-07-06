@@ -13,7 +13,8 @@ func OpenMysqlDns(dsn string) (db *DB, err error) {
 	return
 }
 
+//time zone = UTC time
 func OpenMysql(user, pass, addr, dbname string) (db *DB, err error) {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", user, pass, addr, dbname)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=True&loc=UTC", user, pass, addr, dbname)
 	return OpenMysqlDns(dsn)
 }
