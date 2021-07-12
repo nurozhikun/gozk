@@ -34,10 +34,11 @@ type RoleClaims struct {
 // }
 
 func TokenOfRoles(user string, key []byte, roles []uint) (string, error) {
-	claim := &RoleClaims{StandardClaims: jwt.StandardClaims{
-		Audience:  user,
-		ExpiresAt: time.Now().Add(3 * time.Hour).UTC().Unix(),
-	},
+	claim := &RoleClaims{
+		StandardClaims: jwt.StandardClaims{
+			Audience:  user,
+			ExpiresAt: time.Now().Add(3 * time.Hour).UTC().Unix(),
+		},
 		RoleIDs: roles,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS384, claim)
@@ -58,7 +59,7 @@ func ParseTokenOfRoles(key []byte, tokenStr string) (user string, roles []uint, 
 	if !token.Valid {
 		return rc.Audience, rc.RoleIDs, ErrInvalid
 	}
-	//judge ExpiresAt
+	// judge ExpiresAt
 	exp := time.Unix(rc.ExpiresAt, 0)
 	if exp.Before(time.Now().UTC()) {
 		return rc.Audience, rc.RoleIDs, ErrExpired
@@ -66,6 +67,7 @@ func ParseTokenOfRoles(key []byte, tokenStr string) (user string, roles []uint, 
 	return rc.Audience, rc.RoleIDs, nil
 }
 
+// 解析token并更新
 func ParseTokenOfRolesUpExp(key []byte, tokenStr string) (user string, roles []uint, newToken string, err error) {
 	user, roles, err = ParseTokenOfRoles(key, tokenStr)
 	if nil != err {
