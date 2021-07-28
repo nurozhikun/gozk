@@ -16,12 +16,14 @@ const (
 	ErrCodeHasExist = 1 + iota
 	ErrCodeNotFound
 	ErrCodeUserOrPassMiss
+	ErrCodeCmdUnexist
 )
 
 var (
 	ErrHasExist       = NewError(ErrCodeHasExist, "the value has existed")
 	ErrNotFound       = NewError(ErrCodeNotFound, "the value has not found")
 	ErrUserOrPassMiss = NewError(ErrCodeUserOrPassMiss, "the user isn't found or wrong password")
+	ErrCmdUnexist     = NewError(ErrCodeCmdUnexist, "the command is unexist")
 )
 
 func NewError(code int, s string) error {

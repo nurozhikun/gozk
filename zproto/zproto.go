@@ -8,9 +8,32 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+var (
+	defMarshalJson   *protojson.MarshalOptions
+	defUnmarshalJson *protojson.UnmarshalOptions
+)
+
+func init() {
+	defMarshalJson = &protojson.MarshalOptions{UseProtoNames: false,
+		EmitUnpopulated: true,
+		AllowPartial:    true}
+	defUnmarshalJson = &protojson.UnmarshalOptions{
+		AllowPartial:   true,
+		DiscardUnknown: true,
+	}
+}
+
 type Message interface {
 	proto.Message
 	// Marshal() (data []byte, err error)
+}
+
+func UnmarshalString(bs []byte, msg proto.Message) error {
+	return defUnmarshalJson.Unmarshal(bs, msg)
+}
+
+func MarshalString(msg Message) string {
+	return defMarshalJson.Format(msg)
 }
 
 func ReadContext(ctx iris.Context, msg Message) error {

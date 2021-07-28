@@ -26,6 +26,13 @@ func (db *DB) StdDB() *sql.DB {
 	return d
 }
 
+func (db *DB) Close() {
+	d := db.StdDB()
+	if nil != d {
+		d.Close()
+	}
+}
+
 func (db *DB) AddForeignKey(ftable, fkey, rtable, rkey string) (*DB, error) {
 	key := "fk_" + fkey + "_" + rkey
 	rows, err := db.StdDB().Query("SELECT * FROM information_schema.KEY_COLUMN_USAGE where constraint_name = ?", key)

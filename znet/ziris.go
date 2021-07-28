@@ -16,3 +16,18 @@ func Cors(ctx context.Context) {
 	}
 	ctx.Next()
 }
+
+func IrisResHeader(ctx context.Context) {
+	s := ctx.GetHeader(ZkCmd)
+	if len(s) > 0 {
+		ctx.Header(ZkCmd, s)
+	}
+	s = ctx.GetHeader(ZkTimestamp)
+	if len(s) > 0 {
+		ctx.Header(ZkTimestamp, s)
+	}
+	s = ctx.GetHeader(ZkHeader)
+	if len(s) > 0 {
+		ctx.Header(ZkHeader, s)
+	}
+}
