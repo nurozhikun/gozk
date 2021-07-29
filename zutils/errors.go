@@ -17,6 +17,7 @@ const (
 	ErrCodeNotFound
 	ErrCodeUserOrPassMiss
 	ErrCodeCmdUnexist
+	ErrCodeNullParam
 )
 
 var (
@@ -24,6 +25,7 @@ var (
 	ErrNotFound       = NewError(ErrCodeNotFound, "the value has not found")
 	ErrUserOrPassMiss = NewError(ErrCodeUserOrPassMiss, "the user isn't found or wrong password")
 	ErrCmdUnexist     = NewError(ErrCodeCmdUnexist, "the command is unexist")
+	ErrNullParam      = NewError(ErrCodeNullParam, "there are some null parameters")
 )
 
 func NewError(code int, s string) error {
