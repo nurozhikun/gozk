@@ -1,7 +1,6 @@
 package zproto
 
 import (
-	"gitee.com/sienectagv/gozk/zlogger"
 	"gitee.com/sienectagv/gozk/znet"
 	"github.com/kataras/iris/v12"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -60,8 +59,6 @@ func WriteContext(ctx iris.Context, msg Message, contentType string) (int, error
 		o := protojson.MarshalOptions{UseProtoNames: false,
 			EmitUnpopulated: true,
 			AllowPartial:    true}
-		// return o.Format(msg), nil
-		zlogger.Println(o.Format(msg))
 		return ctx.Text(o.Format(msg))
 	} else {
 		o := proto.MarshalOptions{AllowPartial: true}

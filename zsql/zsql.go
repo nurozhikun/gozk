@@ -64,5 +64,5 @@ func (db *DB) SelectRows(dest interface{}, qury string, args ...interface{}) err
 	if nil == xdb {
 		return errors.New("failed to create the sqlx.DB")
 	}
-	return xdb.Select(dest, qury, args...)
+	return xdb.Unsafe().Select(dest, qury, args...)
 }

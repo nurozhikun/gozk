@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"sync"
 	"time"
-
-	"gitee.com/sienectagv/gozk/zlogger"
 )
 
 func WaitForEnter(s string) {
@@ -29,6 +27,7 @@ type LoopGroup struct {
 	mtx   sync.Mutex
 	loops map[string]*loop
 	stops []FnRunner
+	// eventLoops map[string]*eventLoop
 }
 
 func NewLoopGroup() *LoopGroup {
@@ -39,6 +38,29 @@ func NewLoopGroup() *LoopGroup {
 
 type loop struct {
 	chquit chan int32
+}
+
+// type Event struct {
+// 	Data       map[string]interface{}
+// 	FnCallback func(map[string]interface{})
+// }
+
+// type eventLoop struct {
+// 	loop
+// }
+
+// func (lg *LoopGroup) GoEventLoop(key string) error {
+// 	return nil
+// }
+
+func (lg *LoopGroup) GoOnce(fnProc func()) {
+	lg.mtx.Lock()
+	defer lg.mtx.Unlock()
+	lg.Add(1)
+	go func() {
+		defer lg.Done()
+		fnProc()
+	}()
 }
 
 func (lg *LoopGroup) AddAsyncBlock(fnBlock func(), fnStop func()) {
@@ -64,8 +86,8 @@ func (lg *LoopGroup) GoLoop(key string, fn func() int, timeout time.Duration, fn
 	// if nil == lg.loops {
 	// 	lg.loops = make(map[string]*loop)
 	// }
-	zlogger.Info(lg.loops)
 	lg.loops[key] = l
+	// zlogger.Info(lg.loops)
 	go func() {
 		if timeout == 0 {
 			timeout = 25
@@ -109,17 +131,24 @@ func (lg *LoopGroup) WaitForEnter(enter string) {
 }
 
 func (lg *LoopGroup) Wait() {
-	lg.mtx.Lock()
-	defer lg.mtx.Unlock()
+	// lg.mtx.Lock()
+	// defer lg.mtx.Unlock()
 	for _, stop := range lg.stops {
 		go stop()
 	}
 	lg.stops = nil
-	for _, v := range lg.loops {
-		go func() {
-			v.chquit <- 1
-		}()
+	// zlogger.Info(lg.loops)
+	for k, l := range lg.loops {
+		go func(key string, lp *loop) {
+			lp.chquit <- 1
+		}(k, l)
 	}
 	lg.loops = nil
 	lg.WaitGroup.Wait()
+}
+
+func (lg *LoopGroup) Done() {
+	lg.mtx.Lock()
+	defer lg.mtx.Unlock()
+	lg.WaitGroup.Done()
 }
