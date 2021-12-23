@@ -40,19 +40,6 @@ type loop struct {
 	chquit chan int32
 }
 
-// type Event struct {
-// 	Data       map[string]interface{}
-// 	FnCallback func(map[string]interface{})
-// }
-
-// type eventLoop struct {
-// 	loop
-// }
-
-// func (lg *LoopGroup) GoEventLoop(key string) error {
-// 	return nil
-// }
-
 func (lg *LoopGroup) GoOnce(fnProc func()) {
 	lg.mtx.Lock()
 	defer lg.mtx.Unlock()
@@ -74,20 +61,30 @@ func (lg *LoopGroup) AddAsyncBlock(fnBlock func(), fnStop func()) {
 	}()
 }
 
-func (lg *LoopGroup) GoLoop(key string, fn func() int, timeout time.Duration, fnCancel func()) error {
+func (lg *LoopGroup) createLoop(key string) (l *loop, bExist bool) {
 	lg.mtx.Lock()
 	defer lg.mtx.Unlock()
-	_, ok := lg.loops[key]
-	if ok {
+	l, bExist = lg.loops[key]
+	if bExist {
+		return
+	}
+	l = &loop{chquit: make(chan int32)}
+	lg.loops[key] = l
+	return
+}
+
+func (lg *LoopGroup) deleteLoop(key string) {
+	lg.mtx.Lock()
+	defer lg.mtx.Unlock()
+	delete(lg.loops, key) //结束的时候从map中删除
+}
+
+func (lg *LoopGroup) GoLoop(key string, fn func() int, timeout time.Duration, fnCancel func()) error {
+	l, bExist := lg.createLoop(key)
+	if bExist {
 		return fmt.Errorf("the key %s has existed", key)
 	}
 	lg.Add(1)
-	l := &loop{chquit: make(chan int32)}
-	// if nil == lg.loops {
-	// 	lg.loops = make(map[string]*loop)
-	// }
-	lg.loops[key] = l
-	// zlogger.Info(lg.loops)
 	go func() {
 		if timeout == 0 {
 			timeout = 25
@@ -110,6 +107,7 @@ func (lg *LoopGroup) GoLoop(key string, fn func() int, timeout time.Duration, fn
 			fnCancel()
 		}
 		lg.Done()
+		lg.deleteLoop(key)
 	}()
 	return nil
 }
@@ -122,7 +120,6 @@ func (lg *LoopGroup) ExitLoop(key string) {
 		return
 	}
 	v.chquit <- 1
-	delete(lg.loops, key)
 }
 
 func (lg *LoopGroup) WaitForEnter(enter string) {
