@@ -2,13 +2,14 @@ package base
 
 import (
 	"gitee.com/sienectagv/gozk/zmap"
-	"gitee.com/sienectagv/gozk/zreflect"
 )
 
 type (
 	// Val = zutils.Val
-	Map = zmap.Map
-	Int = int64
+	Map            = zmap.Map
+	Int            = int64
+	FnCreateCustom = func(code Int, cmd *Command) ICustom
+	FnCreateStream = func(code Int, cmd *Command) IStream
 )
 
 var (
@@ -28,10 +29,13 @@ const (
 	FieldStream       = "stream"
 	FieldCustom       = "custom"
 	FieldAddr         = "addr"          //string
-	FieldReadTimeout  = "read_timeout"  //int64
-	FieldWriteTimeout = "write_timeout" //int64
+	FieldReadTimeout  = "read_timeout"  //int64 ms
+	FieldWriteTimeout = "write_timeout" //int64 ms
 	FieldWorkMode     = "work_mode"     //int64
 	FieldChanCommand  = "chan_command"  //chan Command
+	// FieldCallback     = "callback"      //ICallback
+	FieldPackSize = "pack_size" //int64 the max size of the package
+	// FieldNetConn      = "net_conn"      //net.Conn
 )
 
 //value of command
@@ -75,34 +79,24 @@ type Command struct {
 	BodyStruct interface{}
 }
 
-func (c *Command) Make() {
-	if c.BodyMap == nil {
-		c.BodyMap = NewMap()
-	}
-}
+// type IVessel interface {
+// 	Start()
+// 	Close()
+// 	Dispatch(cmd *Command)
+// 	DispatchStruct(cmdCode Int, toId string, body interface{})
+// }
 
-func (c *Command) StructToMap() {
-	c.Make()
-	c.BodyMap.InsertMap(zreflect.StructFieldsByTag(c.BodyStruct, StructTag))
-}
-
-type IVessel interface {
-	Start()
-	Close()
-	Dispatch(cmd *Command)
-	DispatchStruct(cmdCode Int, toId string, body interface{})
-}
-
-type IVesselCallback interface {
-	ICreateCustom(customCode Int, cmd *Command) ICustom
-	ICreateStream(streamCode Int, cmd *Command) IStream
-}
+// type ICallback interface {
+// 	ICreateCustom(customCode Int, cmd *Command) ICustom
+// 	ICreateStream(streamCode Int, cmd *Command) IStream
+// }
 
 type IDeviceObject interface {
 	ID() string
-	Vessel() IVessel
+	// Vessel() IVessel
 	ParamsMap() *zmap.SyncMap
 	Dispatch(cmd *Command)
+	Delete()
 }
 
 type ICustom interface {
@@ -119,7 +113,7 @@ type IStream interface {
 	IoOpen() error
 	IoClose() error
 	IoCanWrite() bool
-	IoWrite(bin interface{}) (err error)
+	IoWrite(bin interface{}) error
 	IoCanRead() bool
 	IoRead() (bin interface{}, err error)
 }

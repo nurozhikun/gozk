@@ -11,18 +11,17 @@ import (
 )
 
 const (
-	loopKeyVessel      = "vessel"
-	loopKeyWriteSuffix = ".wirte"
-	loopKeyReadFuffix  = ".read"
+	loopKeyVessel = "vessel"
 )
 
 type (
-	Command         = base.Command
-	IVesselCallback = base.IVesselCallback
+	Command = base.Command
+	// ICallback = base.ICallback
 )
 
 type Vessel struct {
-	Callback  IVesselCallback
+	base.FnCreateCustom
+	base.FnCreateStream
 	devices   base.Map
 	waitGroup *zutils.LoopGroup
 	chCommand chan Command
@@ -85,7 +84,7 @@ DATA_LOOP:
 }
 
 func (v *Vessel) commandProcess(cmd *Command) {
-	cmd.StructToMap()
+	cmd.Make().StructToMap()
 	if base.DeviceID_Vessel != cmd.ToID {
 		v.cmdToDevice(cmd)
 	}
@@ -126,9 +125,6 @@ func (v *Vessel) createDevice(cmd *Command) {
 	if ok {
 		return
 	}
-	if nil == v.Callback {
-		return
-	}
 	//create the object of virtualDevice
 	vd := &virtualDevice{
 		vessel:  v,
@@ -141,9 +137,9 @@ func (v *Vessel) createDevice(cmd *Command) {
 
 	//create custom
 	if tmpVal, ok := cmd.BodyMap.Get(base.FieldStream); ok {
-		if vd.ICustom, ok = tmpVal.(base.ICustom); !ok {
+		if vd.ICustom, ok = tmpVal.(base.ICustom); !ok && nil != v.FnCreateCustom {
 			if code, ok := zutils.InterfaceToInt(tmpVal); ok {
-				vd.ICustom = v.Callback.ICreateCustom(code, cmd)
+				vd.ICustom = v.FnCreateCustom(code, cmd)
 			}
 		}
 	}
@@ -152,9 +148,9 @@ func (v *Vessel) createDevice(cmd *Command) {
 	}
 	//create stream
 	if tmpVal, ok := cmd.BodyMap.Get(base.FieldCustom); ok {
-		if vd.ICustom, ok = tmpVal.(base.ICustom); !ok {
+		if vd.ICustom, ok = tmpVal.(base.ICustom); !ok && nil != v.FnCreateStream {
 			if code, ok := zutils.InterfaceToInt(tmpVal); ok {
-				vd.IStream = v.Callback.ICreateStream(code, cmd)
+				vd.IStream = v.FnCreateStream(code, cmd)
 			}
 		}
 	}
@@ -162,6 +158,7 @@ func (v *Vessel) createDevice(cmd *Command) {
 		return
 	}
 	//init the device
+	cmd.ToID = id
 	vd.Dispatch(cmd)
 	go vd.routineCommand()
 	go vd.routineRead()
@@ -175,9 +172,12 @@ func (v *Vessel) deleteDevice(cmd *Command) {
 	if !ok {
 		return
 	}
-	cmd.ToID = id
-	v.cmdToDevice(cmd)
-	v.devices.Delete(cmd.ToID)
+	if d, ok := v.devices.Delete(cmd.ToID); ok {
+		if dev, ok := d.(*virtualDevice); ok {
+			cmd.ToID = id
+			dev.Dispatch(cmd)
+		}
+	}
 }
 
 func (v *Vessel) setParams(cmd *Command) {

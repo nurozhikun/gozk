@@ -21,9 +21,9 @@ type virtualDevice struct {
 }
 
 //for IDeviceObject interface
-func (d *virtualDevice) Vessel() base.IVessel {
-	return d.vessel
-}
+// func (d *virtualDevice) Vessel() base.IVessel {
+// 	return d.vessel
+// }
 
 func (d *virtualDevice) ID() string {
 	return d.id.Get()
@@ -42,6 +42,25 @@ func (d *virtualDevice) Dispatch(cmd *Command) {
 	if nil == cmd {
 		return
 	}
+	if cmd.ToID == d.ID() {
+		d.dispatch(cmd)
+	} else {
+		d.vessel.Dispatch(cmd)
+	}
+}
+
+func (d *virtualDevice) Delete() {
+	cmd := &Command{
+		Cmd:  base.Command_DeleteDevice,
+		ToID: base.DeviceID_Vessel,
+	}
+	cmd.Make().SetField(base.FieldID, d.ID())
+	d.Dispatch(cmd)
+}
+
+//inner funcs of virtualDevice
+
+func (d *virtualDevice) dispatch(cmd *Command) {
 	go func() {
 		defer func() {
 			if r := recover(); r != nil {
@@ -51,8 +70,6 @@ func (d *virtualDevice) Dispatch(cmd *Command) {
 		d.chCmd <- *cmd
 	}()
 }
-
-//inner funcs of virtualDevice
 
 func (d *virtualDevice) init(cmd *Command) {
 	d.ICustom.IInit(d, cmd)
@@ -111,6 +128,7 @@ func (d *virtualDevice) processCommand(cmd *Command) {
 		d.init(cmd)
 	case base.Command_DeleteDevice:
 		d.workMode.Set(base.WorkMode_Delete)
+		d.close()
 	case base.Command_RestartDevice:
 		d.setParams(cmd)
 		d.close()
@@ -138,7 +156,10 @@ func (d *virtualDevice) processSending() error {
 	}
 	//write data to io
 	for i := 0; i < len(d.sendCmdList); i++ {
-		// err := d.sendOneCmd(d.sendCmdList[i])
+		if !d.IoCanWrite() {
+			d.sendCmdList = d.sendCmdList[i:]
+			return nil
+		}
 		err, _ := d.sendData(func() (interface{}, bool, error) {
 			return d.IPackCommand(d.sendCmdList[i])
 		})

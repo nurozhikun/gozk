@@ -10,7 +10,7 @@ type StrmCfgNet struct {
 	Password string `zdev:"password"`
 }
 
-type Stream struct {
+type StreamBase struct {
 	base.DevicePartner
 }
 
@@ -24,6 +24,6 @@ func (s *StrmEmptyWrite) IoWrite(bin interface{}) (err error) {
 	return nil
 }
 
-// func (s *Stream) Write(bin interface{}) (err error) {
+// func (s *StreamBase) Write(bin interface{}) (err error) {
 // 	return nil
 // }

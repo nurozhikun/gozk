@@ -9,13 +9,13 @@ import (
 type VesselCallback struct{}
 
 func (cb *VesselCallback) ICreateCustom(customCode int64, cmd *Command) base.ICustom {
-	return &custom.Custom{}
+	return &custom.CustomBase{}
 }
 
 func (cb *VesselCallback) ICreateStream(streamCode int64, cmd *Command) base.IStream {
 	switch streamCode {
 	case base.Stream_TcpListener:
-		return stream.CreaeTcpListener(cmd.BodyMap)
+		return stream.CreateTcpListener(cmd.BodyMap)
 	default:
 		return nil
 	}

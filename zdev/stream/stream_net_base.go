@@ -5,14 +5,20 @@ import (
 	"gitee.com/sienectagv/gozk/zsync"
 )
 
-type StrmNetBase struct {
-	Stream
-	readTimeout  zsync.Int64
-	writeTimeout zsync.Int64
+const (
+	DefMaxPackSize = 1024 * 32
+)
+
+type strmNetBase struct {
+	StreamBase
+	ReadTimeout  zsync.Int64
+	WriteTimeout zsync.Int64
+	PackSize     zsync.Int64
 }
 
-func (s *StrmNetBase) ISetParams(cmd *base.Command) {
-	s.Stream.ISetParams(cmd)
-	cmd.BodyMap.TryAtomicInt64(base.FieldReadTimeout, &s.readTimeout)
-	cmd.BodyMap.TryAtomicInt64(base.FieldWriteTimeout, &s.writeTimeout)
+func (s *strmNetBase) ISetParams(cmd *base.Command) {
+	s.StreamBase.ISetParams(cmd)
+	cmd.BodyMap.TryAtomicInt64(base.FieldReadTimeout, &s.ReadTimeout)
+	cmd.BodyMap.TryAtomicInt64(base.FieldWriteTimeout, &s.WriteTimeout)
+	cmd.BodyMap.TryAtomicInt64(base.FieldPackSize, &s.PackSize)
 }

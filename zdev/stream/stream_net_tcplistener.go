@@ -8,17 +8,17 @@ import (
 )
 
 type StrmTcpListener struct {
-	StrmNetBase
 	StrmEmptyWrite
+	strmNetBase
 	listener *net.TCPListener
 }
 
-func CreaeTcpListener(m base.Map) *StrmTcpListener {
+func CreateTcpListener(m base.Map) *StrmTcpListener {
 	return &StrmTcpListener{}
 }
 
 func (sl *StrmTcpListener) ISetParams(cmd *base.Command) {
-	sl.StrmNetBase.ISetParams(cmd)
+	sl.strmNetBase.ISetParams(cmd)
 	sl.ParamsMap().InsertMapByKeys(cmd.BodyMap, base.FieldAddr)
 }
 
