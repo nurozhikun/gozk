@@ -121,6 +121,7 @@ func (v *Vessel) createDevice(cmd *Command) {
 	if !ok {
 		return
 	}
+	zlogger.Info("create device ID:", id)
 	_, ok = v.devices.Get(id)
 	if ok {
 		return
@@ -172,6 +173,7 @@ func (v *Vessel) deleteDevice(cmd *Command) {
 	if !ok {
 		return
 	}
+	zlogger.Info("delete device ID", id)
 	if d, ok := v.devices.Delete(cmd.ToID); ok {
 		if dev, ok := d.(*virtualDevice); ok {
 			cmd.ToID = id

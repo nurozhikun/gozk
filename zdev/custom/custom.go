@@ -23,11 +23,11 @@ func (c *CustomBase) IPackCommand(cmd *base.Command) (bin interface{}, unfinishe
 	return cmd, false, nil
 }
 
-func (c *CustomBase) IUnpackToCommand(bin interface{}) (cmd *base.Command, err error) {
+func (c *CustomBase) IUnpackToCommand(bin interface{}) (cmd *base.Command, unfinished bool, err error) {
 	cmd = &base.Command{
-		Cmd:        base.Command_SendData,
-		ToID:       base.DeviceID_Vessel,
-		BodyStruct: bin,
+		Cmd:  base.Command_SendData,
+		ToID: base.DeviceID_Vessel,
+		// BodyStruct: bin,//maybe need copy
 	}
 	cmd.Make()
 	cmd.ToID, _ = c.ParamsMap().GetString(base.FieldAckID)

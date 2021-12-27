@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"path/filepath"
 
 	"gitee.com/sienectagv/gozk/zlogger"
 	"gitee.com/sienectagv/gozk/zutils"
@@ -13,8 +14,47 @@ import (
 
 type Model = gorm.Model
 
+const (
+	TypeSqlite   = 0
+	TypeMysqlite = 1
+)
+
+type Cfg struct {
+	Type     int    `ini:"type"` //0:sqlite, 1:mysql
+	Addr     string `ini:"addr"`
+	User     string `ini:"user"`
+	Password string `ini:"password"`
+	Database string `ini:"database"` //or filename
+	MaxOpen  int    `ini:"max_open"`
+	MaxIdle  int    `ini:"max_idle"`
+}
+
+// type DB struct {
+// 	*gorm.DB
+// }
+
 type DB struct {
 	*gorm.DB
+}
+
+func OpenDB(cfg *Cfg) (db *DB) {
+	var err error
+	switch cfg.Type {
+	case TypeMysqlite:
+		db, err = OpenMysql(cfg.User, cfg.Password, cfg.Addr, cfg.Database)
+	default:
+		filename, _ := filepath.Abs(cfg.Database)
+		zlogger.Info("sqlite filename:", filename)
+		db, err = OpenSqlite3(filename)
+	}
+	if nil != db {
+		db.StdDB().SetMaxOpenConns(cfg.MaxOpen)
+		db.StdDB().SetMaxIdleConns(cfg.MaxIdle)
+	}
+	if nil != err {
+		zlogger.Error(err)
+	}
+	return
 }
 
 func (db *DB) StdDB() *sql.DB {

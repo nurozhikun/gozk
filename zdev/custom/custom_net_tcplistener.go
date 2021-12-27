@@ -12,7 +12,7 @@ type CustomTcpListener struct {
 	CreateConnCustom func() base.ICustom
 }
 
-func (c *CustomTcpListener) IUnpackToCommand(bin interface{}) (cmd *base.Command, err error) {
+func (c *CustomTcpListener) IUnpackToCommand(bin interface{}) (cmd *base.Command, unfinished bool, err error) {
 	conn, ok := bin.(net.Conn)
 	if !ok {
 		return
@@ -21,7 +21,7 @@ func (c *CustomTcpListener) IUnpackToCommand(bin interface{}) (cmd *base.Command
 		conn.Close()
 		return
 	}
-	cmd, err = c.CustomBase.IUnpackToCommand(bin)
+	cmd, unfinished, err = c.CustomBase.IUnpackToCommand(bin)
 	cmd.Cmd = base.Command_CreateDevice
 	cmd.BodyMap.Insert(base.FieldID, c.ID()+".conn."+conn.RemoteAddr().String())
 	cmd.Make().

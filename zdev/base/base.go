@@ -105,7 +105,7 @@ type ICustom interface {
 	IScheduled() (bin interface{}, unfinished bool, err error)
 	IPackCommand(cmd *Command) (bin interface{}, unfinished bool, err error)
 	//called in read gorunting
-	IUnpackToCommand(bin interface{}) (cmd *Command, err error)
+	IUnpackToCommand(bin interface{}) (cmd *Command, unfinished bool, err error)
 }
 
 type IStream interface {

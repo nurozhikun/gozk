@@ -202,11 +202,16 @@ func (d *virtualDevice) routineRead() {
 			d.restart()
 			continue
 		}
-		cmd, err := d.IUnpackToCommand(bin)
-		if nil != err {
-			d.restart()
-			continue
+		var cmd *Command
+		uf := true
+		for uf {
+			cmd, uf, err = d.IUnpackToCommand(bin)
+			if nil != err {
+				d.restart()
+				continue
+			}
+			d.Dispatch(cmd)
+			bin = nil
 		}
-		d.Dispatch(cmd)
 	}
 }

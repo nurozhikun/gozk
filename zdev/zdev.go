@@ -46,8 +46,11 @@ const (
 	SKeyName   = base.FieldName   //string
 	SKeyId     = base.FieldID     //int
 	SKeyAdd    = base.FieldAddr   //string
-	SKeyStream = base.FieldCustom //int
+	SKeyStream = base.FieldStream //int
 	SKeyCustom = base.FieldCustom //int
+
+	DeviceID_Vessel = base.DeviceID_Vessel
+	DeviceID_Log    = base.DeviceID_Log
 )
 
 //streams
@@ -67,4 +70,11 @@ type VirtualNode struct {
 	Addr   string  `zdev:"addr"`
 	Stream IStream `zdev:"stream"`
 	Custom ICustom `zdev:"custom"`
+}
+
+func CreateDevInVessel(node *VirtualNode, v *Vessel) {
+	cmd := &Command{Cmd: Command_CreateDevice,
+		ToID:       base.DeviceID_Vessel,
+		BodyStruct: node}
+	v.Dispatch(cmd)
 }

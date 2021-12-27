@@ -10,7 +10,7 @@ import (
 func OpenMysqlDns(dsn string) (db *DB, err error) {
 	db = &DB{}
 	db.DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	return
+	return (*DB)(db), err
 }
 
 //time zone = UTC time
