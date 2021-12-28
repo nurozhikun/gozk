@@ -22,10 +22,11 @@ func init() {
 	}
 }
 
-type Message interface {
-	proto.Message
-	// Marshal() (data []byte, err error)
-}
+// type Message interface {
+// 	proto.Message
+// 	// Marshal() (data []byte, err error)
+// }
+type Message = proto.Message
 
 func UnmarshalString(bs []byte, msg proto.Message) error {
 	return defUnmarshalJson.Unmarshal(bs, msg)

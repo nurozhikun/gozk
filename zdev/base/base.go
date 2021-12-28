@@ -36,6 +36,7 @@ const (
 	// FieldCallback     = "callback"      //ICallback
 	FieldPackSize = "pack_size" //int64 the max size of the package
 	// FieldNetConn      = "net_conn"      //net.Conn
+	FieldIrisApp = "iris_app" //iris.Application
 )
 
 //value of command

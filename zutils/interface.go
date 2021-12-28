@@ -2,6 +2,11 @@ package zutils
 
 import "strconv"
 
+func StringFromInterface(i interface{}) string {
+	s, _ := InterfaceToString(i)
+	return s
+}
+
 func InterfaceToString(v interface{}) (string, bool) {
 	switch v.(type) {
 	case string:

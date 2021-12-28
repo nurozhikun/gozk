@@ -39,6 +39,7 @@ func TestStructTag(t *testing.T) {
 	// fmt.Println(vp.Elem().NumField())
 }
 
+//to test -v .\structs_test.go -run TestZDevNodes
 func TestZDevNodes(t *testing.T) {
 	node := &zdev.VirtualNode{
 		ID:     "abc",

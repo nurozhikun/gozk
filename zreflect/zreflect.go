@@ -4,7 +4,6 @@ import (
 	"reflect"
 	"sort"
 
-	"gitee.com/sienectagv/gozk/zlogger"
 	"gitee.com/sienectagv/gozk/zmap"
 	"gitee.com/sienectagv/gozk/zsort"
 	"gitee.com/sienectagv/gozk/zstrings"
@@ -47,21 +46,20 @@ func (z *zreflect) processOneInterface(i interface{}) {
 		iv = iv.Elem()
 	}
 	// fmt.Println(it)
-	zlogger.Info(it, it.Kind())
 	if it.Kind() != reflect.Struct {
 		return
 	}
+	// zlogger.Info(it, it.Kind())
 	z.processOneStruct(it, iv)
 }
 
 func (z *zreflect) processOneStruct(st reflect.Type, sv reflect.Value) {
-	zlogger.Info(st.NumField())
 	for i := 0; i < st.NumField(); i++ {
 		stField := st.Field(i)
 		svField := sv.Field(i)
 	ONE_FIELD:
 		curType := stField.Type
-		zlogger.Info(i, curType, curType.Kind())
+		// zlogger.Info(i, curType, curType.Kind())
 		switch curType.Kind() {
 		case reflect.Ptr:
 			svField = sv.Elem()
@@ -69,8 +67,9 @@ func (z *zreflect) processOneStruct(st reflect.Type, sv reflect.Value) {
 			goto ONE_FIELD
 		case reflect.Interface:
 			if !z.tryTagField(stField, svField) {
-				z.processOneInterface(sv.Interface())
+				z.processOneInterface(svField.Interface())
 			}
+			// z.tryAddField(stField, svField)
 		case reflect.Struct:
 			z.processOneStruct(curType, svField)
 		case reflect.Invalid:

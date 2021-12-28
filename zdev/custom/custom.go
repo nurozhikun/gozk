@@ -6,7 +6,7 @@ import (
 
 type CustomBase struct {
 	base.DevicePartner
-	AckID string
+	// AckID string
 	// base.ICallback
 }
 

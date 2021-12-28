@@ -193,7 +193,7 @@ func (d *virtualDevice) sendData(fnPack func() (interface{}, bool, error)) (err 
 
 func (d *virtualDevice) routineRead() {
 	for d.workMode.Get() >= base.WorkMode_Pause {
-		if !d.IoCanRead() {
+		if d.workMode.Get() == base.WorkMode_Pause || !d.IoCanRead() {
 			time.Sleep(25 * time.Millisecond)
 			continue
 		}

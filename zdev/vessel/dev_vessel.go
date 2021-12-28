@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"gitee.com/sienectagv/gozk/zdev/base"
+	"gitee.com/sienectagv/gozk/zdev/custom"
 	"gitee.com/sienectagv/gozk/zlogger"
 	"gitee.com/sienectagv/gozk/zmap"
 	"gitee.com/sienectagv/gozk/zutils"
@@ -119,6 +120,7 @@ func (v *Vessel) cmdToDevice(cmd *Command) {
 func (v *Vessel) createDevice(cmd *Command) {
 	id, ok := cmd.BodyMap.GetString(base.FieldID)
 	if !ok {
+		zlogger.Error("fail to get id in createDevice")
 		return
 	}
 	zlogger.Info("create device ID:", id)
@@ -145,7 +147,7 @@ func (v *Vessel) createDevice(cmd *Command) {
 		}
 	}
 	if nil == vd.ICustom {
-		return
+		vd.ICustom = &custom.CustomBase{}
 	}
 	//create stream
 	if tmpVal, ok := cmd.BodyMap.Get(base.FieldCustom); ok {
