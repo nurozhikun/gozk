@@ -36,11 +36,14 @@ func NewError(code int, s string) error {
 }
 
 func ErrorCode(err error) int {
+	if nil == err {
+		return 0
+	}
 	e, ok := err.(*Error)
 	if ok {
 		return e.Code
 	}
-	return 0
+	return -1
 }
 
 func (e *Error) Error() string {

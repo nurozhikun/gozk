@@ -5,6 +5,7 @@ import (
 	"github.com/kataras/iris/v12"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
 var (
@@ -27,6 +28,14 @@ func init() {
 // 	// Marshal() (data []byte, err error)
 // }
 type Message = proto.Message
+
+type EmptyMessage struct{}
+
+func (*EmptyMessage) ProtoMessage() {}
+
+func (*EmptyMessage) ProtoReflect() protoreflect.Message {
+	return nil
+}
 
 func UnmarshalString(bs []byte, msg proto.Message) error {
 	return defUnmarshalJson.Unmarshal(bs, msg)
