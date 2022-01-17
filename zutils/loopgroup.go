@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"sync"
 	"time"
-
-	"gitee.com/sienectagv/gozk/zlogger"
 )
 
 func WaitForEnter(s string) {
@@ -29,6 +27,7 @@ type LoopGroup struct {
 	mtx   sync.Mutex
 	loops map[string]*loop
 	stops []FnRunner
+	// eventLoops map[string]*eventLoop
 }
 
 func NewLoopGroup() *LoopGroup {
@@ -39,6 +38,16 @@ func NewLoopGroup() *LoopGroup {
 
 type loop struct {
 	chquit chan int32
+}
+
+func (lg *LoopGroup) GoOnce(fnProc func()) {
+	lg.mtx.Lock()
+	defer lg.mtx.Unlock()
+	lg.Add(1)
+	go func() {
+		defer lg.Done()
+		fnProc()
+	}()
 }
 
 func (lg *LoopGroup) AddAsyncBlock(fnBlock func(), fnStop func()) {
@@ -52,20 +61,30 @@ func (lg *LoopGroup) AddAsyncBlock(fnBlock func(), fnStop func()) {
 	}()
 }
 
-func (lg *LoopGroup) GoLoop(key string, fn func() int, timeout time.Duration, fnCancel func()) error {
+func (lg *LoopGroup) createLoop(key string) (l *loop, bExist bool) {
 	lg.mtx.Lock()
 	defer lg.mtx.Unlock()
-	_, ok := lg.loops[key]
-	if ok {
+	l, bExist = lg.loops[key]
+	if bExist {
+		return
+	}
+	l = &loop{chquit: make(chan int32)}
+	lg.loops[key] = l
+	return
+}
+
+func (lg *LoopGroup) deleteLoop(key string) {
+	lg.mtx.Lock()
+	defer lg.mtx.Unlock()
+	delete(lg.loops, key) //结束的时候从map中删除
+}
+
+func (lg *LoopGroup) GoLoop(key string, fn func() int, timeout time.Duration, fnCancel func()) error {
+	l, bExist := lg.createLoop(key)
+	if bExist {
 		return fmt.Errorf("the key %s has existed", key)
 	}
 	lg.Add(1)
-	l := &loop{chquit: make(chan int32)}
-	// if nil == lg.loops {
-	// 	lg.loops = make(map[string]*loop)
-	// }
-	zlogger.Info(lg.loops)
-	lg.loops[key] = l
 	go func() {
 		if timeout == 0 {
 			timeout = 25
@@ -88,6 +107,7 @@ func (lg *LoopGroup) GoLoop(key string, fn func() int, timeout time.Duration, fn
 			fnCancel()
 		}
 		lg.Done()
+		lg.deleteLoop(key)
 	}()
 	return nil
 }
@@ -100,7 +120,6 @@ func (lg *LoopGroup) ExitLoop(key string) {
 		return
 	}
 	v.chquit <- 1
-	delete(lg.loops, key)
 }
 
 func (lg *LoopGroup) WaitForEnter(enter string) {
@@ -109,17 +128,24 @@ func (lg *LoopGroup) WaitForEnter(enter string) {
 }
 
 func (lg *LoopGroup) Wait() {
-	lg.mtx.Lock()
-	defer lg.mtx.Unlock()
+	// lg.mtx.Lock()
+	// defer lg.mtx.Unlock()
 	for _, stop := range lg.stops {
 		go stop()
 	}
 	lg.stops = nil
-	for _, v := range lg.loops {
-		go func() {
-			v.chquit <- 1
-		}()
+	// zlogger.Info(lg.loops)
+	for k, l := range lg.loops {
+		go func(key string, lp *loop) {
+			lp.chquit <- 1
+		}(k, l)
 	}
 	lg.loops = nil
 	lg.WaitGroup.Wait()
+}
+
+func (lg *LoopGroup) Done() {
+	lg.mtx.Lock()
+	defer lg.mtx.Unlock()
+	lg.WaitGroup.Done()
 }
