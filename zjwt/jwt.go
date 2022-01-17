@@ -1,13 +1,11 @@
 package zjwt
 
 import (
-
-	// "github.com/dgrijalva/jwt-go"
-
 	"time"
 
 	"gitee.com/sienectagv/gozk/zutils"
 	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/pkg/errors"
 )
 
 const (
@@ -37,7 +35,7 @@ func TokenOfRoles(user string, key []byte, roles []uint) (string, error) {
 	claim := &RoleClaims{
 		StandardClaims: jwt.StandardClaims{
 			Audience:  user,
-			ExpiresAt: time.Now().Add(3 * time.Hour).UTC().Unix(),
+			ExpiresAt: time.Now().Add(7 * 24 * time.Hour).UTC().Unix(),
 		},
 		RoleIDs: roles,
 	}
@@ -47,6 +45,7 @@ func TokenOfRoles(user string, key []byte, roles []uint) (string, error) {
 
 func ParseTokenOfRoles(key []byte, tokenStr string) (user string, roles []uint, err error) {
 	rc := &RoleClaims{}
+	// zlogger.Info(tokenStr)
 	token, err := jwt.ParseWithClaims(tokenStr, rc, func(tk *jwt.Token) (interface{}, error) {
 		if _, ok := tk.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, ErrWrongMethod
@@ -54,7 +53,7 @@ func ParseTokenOfRoles(key []byte, tokenStr string) (user string, roles []uint, 
 		return key, nil
 	})
 	if err != nil {
-		return rc.Audience, rc.RoleIDs, err
+		return rc.Audience, rc.RoleIDs, errors.Wrap(err, "parse token err")
 	}
 	if !token.Valid {
 		return rc.Audience, rc.RoleIDs, ErrInvalid

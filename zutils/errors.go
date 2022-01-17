@@ -6,7 +6,7 @@ import (
 )
 
 type Error struct {
-	Code      int //错误代码
+	Code      int // 错误代码
 	FileName  string
 	Lines     int
 	ErrString string

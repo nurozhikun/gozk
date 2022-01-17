@@ -52,10 +52,10 @@ func (db *DB) AddForeignKey(ftable, fkey, rtable, rkey string) (*DB, error) {
 	return db, result.Error
 }
 
-func (db *DB) SelectRows(dest interface{}, qury string, args ...interface{}) error {
+func (db *DB) SelectRows(dest interface{}, query string, args ...interface{}) error {
 	xdb := sqlx.NewDb(db.StdDB(), db.Dialector.Name())
 	if nil == xdb {
 		return errors.New("failed to create the sqlx.DB")
 	}
-	return xdb.Select(dest, qury, args...)
+	return xdb.Select(dest, query, args...)
 }
