@@ -24,7 +24,6 @@ func (s *StrmIrisApp) ISetParams(cmd *base.Command) {
 	if i, ok := cmd.BodyMap.Get(base.FieldIrisApp); ok {
 		s.app = i.(*iris.Application)
 	}
-
 }
 
 func (s *StrmIrisApp) IoOpen() error {

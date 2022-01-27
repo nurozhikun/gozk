@@ -20,11 +20,11 @@ const (
 )
 
 type Cfg struct {
-	Type     int    `ini:"type"` //0:sqlite, 1:mysql
+	Type     int    `ini:"type"` // 0:sqlite, 1:mysql
 	Addr     string `ini:"addr"`
 	User     string `ini:"user"`
 	Password string `ini:"password"`
-	Database string `ini:"database"` //or filename
+	Database string `ini:"database"` // or filename
 	MaxOpen  int    `ini:"max_open"`
 	MaxIdle  int    `ini:"max_idle"`
 }
@@ -104,9 +104,5 @@ func (db *DB) SelectRows(dest interface{}, query string, args ...interface{}) er
 	if nil == xdb {
 		return errors.New("failed to create the sqlx.DB")
 	}
-<<<<<<< HEAD
 	return xdb.Select(dest, query, args...)
-=======
-	return xdb.Unsafe().Select(dest, qury, args...)
->>>>>>> 957958a008305f4e9b79fe764f8ff810bf07d033
 }
