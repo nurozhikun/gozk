@@ -14,9 +14,11 @@ var (
 )
 
 func init() {
-	defMarshalJson = &protojson.MarshalOptions{UseProtoNames: false,
+	defMarshalJson = &protojson.MarshalOptions{
+		UseProtoNames:   false,
 		EmitUnpopulated: true,
-		AllowPartial:    true}
+		AllowPartial:    true,
+	}
 	defUnmarshalJson = &protojson.UnmarshalOptions{
 		AllowPartial:   true,
 		DiscardUnknown: true,
@@ -27,6 +29,8 @@ func init() {
 // 	proto.Message
 // 	// Marshal() (data []byte, err error)
 // }
+
+// TODO 这样自定义的EmptyMessage使用时会panic 已在protbee中重新定义
 type Message = proto.Message
 
 type EmptyMessage struct{}
@@ -66,9 +70,11 @@ func ReadContext(ctx iris.Context, msg Message) error {
 func WriteContext(ctx iris.Context, msg Message, contentType string) (int, error) {
 	ctx.Header(znet.ContentType, contentType)
 	if contentType == znet.ContentValueJson || contentType == znet.ContentValuePlain {
-		o := protojson.MarshalOptions{UseProtoNames: false,
+		o := protojson.MarshalOptions{
+			UseProtoNames:   false,
 			EmitUnpopulated: true,
-			AllowPartial:    true}
+			AllowPartial:    true,
+		}
 		return ctx.Text(o.Format(msg))
 	} else {
 		o := proto.MarshalOptions{AllowPartial: true}
