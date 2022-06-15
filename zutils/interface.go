@@ -34,6 +34,12 @@ func InterfaceToInt(v interface{}) (int64, bool) {
 		return v.(int64), true
 	case int:
 		return int64(v.(int)), true
+	case string:
+		if i, err := strconv.ParseInt(v.(string), 10, 64); err != nil {
+			return i, false
+		} else {
+			return i, true
+		}
 	default:
 		return 0, false
 	}
@@ -51,6 +57,12 @@ func InterfaceToUint(v interface{}) (uint64, bool) {
 		return v.(uint64), true
 	case uint:
 		return uint64(v.(int)), true
+	case string:
+		if i, err := strconv.ParseUint(v.(string), 10, 64); err != nil {
+			return i, false
+		} else {
+			return i, true
+		}
 	default:
 		return 0, false
 	}

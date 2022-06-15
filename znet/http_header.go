@@ -18,3 +18,14 @@ const (
 	ZkHeader    = "zk-header"    //string Base64 Header in proto
 	ZkTailer    = "zk-tailer"    //string Base64 Tailer in proto
 )
+
+type ReqBodyType = interface{}
+type ResBodyType = interface{}
+
+type Command struct {
+	Cmd        int
+	Path       string
+	MethodName string
+	// 要用函数的原因是每次都要生成一个对象，不能用共享的一个对象
+	FnRequestBody func() ReqBodyType
+}

@@ -13,3 +13,8 @@ func NewHttpClient() *HttpClient {
 		Client: resty.New(),
 	}
 }
+
+type (
+	Response = resty.Response
+	Request  = resty.Request
+)
