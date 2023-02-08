@@ -28,12 +28,12 @@ func DialTLS(addr, password string) (*Conn, error) {
 }
 
 type Pool struct {
-	pool *redis.Pool
+	*redis.Pool
 }
 
 func NewPoolTLS(addr, password string) *Pool {
 	return &Pool{
-		pool: &redis.Pool{
+		Pool: &redis.Pool{
 			Dial: func() (redis.Conn, error) {
 				return DialTLS(addr, password)
 			},
@@ -41,27 +41,33 @@ func NewPoolTLS(addr, password string) *Pool {
 	}
 }
 
+func NewPool(addr string) *Pool {
+	return &Pool{
+		Pool: &redis.Pool{
+			Dial: func() (redis.Conn, error) {
+				return redis.Dial("tcp", addr)
+			},
+		},
+	}
+}
+
 func (p *Pool) SetMaxIdle(n int) {
-	p.pool.MaxIdle = n
+	p.MaxIdle = n
 }
 
 func (p *Pool) SetMaxActive(n int) {
-	p.pool.MaxActive = n
+	p.MaxActive = n
 }
 
 func (p *Pool) SetIdleTime(t time.Duration) {
-	p.pool.IdleTimeout = t
+	p.IdleTimeout = t
 }
 
 func (p *Pool) Get() *Conn {
-	return &Conn{Conn: p.pool.Get()}
+	return &Conn{Conn: p.Pool.Get()}
 }
 
-func (p *Pool) Close() error {
-	return p.pool.Close()
-}
-
-//for list
+// for list
 func (c *Conn) LrangeStrings(key string, start, to int) ([]string, error) {
 	return redis.Strings(c.Do("LRANGE", key, start, to))
 }

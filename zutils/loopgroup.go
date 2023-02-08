@@ -50,6 +50,7 @@ func (lg *LoopGroup) GoOnce(fnProc func()) {
 	}()
 }
 
+// /针对自己有Stop函数的调用，比如Http server
 func (lg *LoopGroup) AddAsyncBlock(fnBlock func(), fnStop func()) {
 	lg.mtx.Lock()
 	defer lg.mtx.Unlock()
@@ -79,6 +80,7 @@ func (lg *LoopGroup) deleteLoop(key string) {
 	delete(lg.loops, key) //结束的时候从map中删除
 }
 
+// /添加一个loop函数，用key来命名，可以用ExitLoop来结束，程序结束时也会自动结束
 func (lg *LoopGroup) GoLoop(key string, fn func() int, timeout time.Duration, fnCancel func()) error {
 	l, bExist := lg.createLoop(key)
 	if bExist {

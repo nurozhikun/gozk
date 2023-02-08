@@ -7,10 +7,10 @@ import (
 	"time"
 )
 
-type config struct {
+type Config struct {
 }
 
-var defCfg = &config{}
+var DefCfg = &Config{}
 
 func Error(e ...interface{}) {
 	_, file, line, _ := runtime.Caller(1)
