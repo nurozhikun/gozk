@@ -20,11 +20,21 @@ func dialTLS(addr, password string) (redis.Conn, error) {
 func DialTLS(addr, password string) (*Conn, error) {
 	// rawURL := fmt.Sprintf("rediss://:%s@%s", password, addr)
 	// c, err := redis.DialURL(rawURL, redis.DialUseTLS(true), redis.DialTLSSkipVerify(true))
+	// redis.NewScript()
 	c, err := dialTLS(addr, password)
 	if nil != err {
 		return nil, err
 	}
 	return &Conn{Conn: c}, nil
+}
+
+func (c *Conn) ReadHashIntValues(key string, args ...interface{}) ([]int, error) {
+	rArgs := redis.Args{}.Add(key)
+	if len(args) > 0 {
+		rArgs = rArgs.Add(args...)
+		return redis.Ints(c.Do("HMGET", rArgs...))
+	}
+	return redis.Ints(c.Do("HVALS", rArgs...))
 }
 
 type Pool struct {

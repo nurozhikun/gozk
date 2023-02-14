@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package zpbf;
+
+option optimize_for = LITE_RUNTIME;
+option java_package = "gozk.zpbf";
+option go_package = "zproto/zpbf";
+
+//unit message
+message Point2F {
+    float x = 1;
+    float y = 2;
+}
+
+message Point3F {
+    float x = 1;
+    float y = 2;
+    float z = 3;
+}
+
+//for http request and response
+message Header {
+    int64 cmd = 1;
+    int64 timestamp = 2;//ms
+    string jwt = 3;
+    int64 code = 4;
+    string error = 5;
+    int64 body_total = 6;
+    int64 body_idx = 7;
+}

@@ -12,4 +12,5 @@ func TestStringSort(t *testing.T) {
 	fmt.Println(ss.Search("kill"))
 	// fmt.Println(ss.Search("dddd"))
 	fmt.Println("end", 'A', 'a'-'A')
+	t.Log("is ok")
 }
