@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"time"
 
+	"gitee.com/sienectagv/gozk/zlogger"
 	"gitee.com/sienectagv/gozk/znet"
 	"gitee.com/sienectagv/gozk/zproto/zpbf"
 	"gitee.com/sienectagv/gozk/zutils"
@@ -13,20 +14,21 @@ import (
 )
 
 type ProtoMethodHandler interface {
-	ReqBodyOfCmd(cmd int) Message
+	// ReqBodyOfCmd(cmd int) Message
 }
 
-type ReqBodyType = Message
-type ResBodyType = Message
+// type ReqBodyType = Message
+// type ResBodyType = Message
 
 type Command struct {
 	Cmd        int
 	Path       string
 	MethodName string
 	// 要用函数的原因是每次都要生成一个对象，不能用共享的一个对象
-	CreateRequestBody func() ReqBodyType
+	CreateRequestBody func() Message
 }
 
+// 保证Handler对象在整个过程中有效就行了
 type ProtoApiParty struct {
 	PartyUrl string //
 	Handler  ProtoMethodHandler
@@ -60,18 +62,35 @@ func (pap *ProtoApiParty) InstallToApp(app *iris.Application) error {
 		ctxFn := func(ctx znet.IrisCtx) {
 			var resMsg Message
 			h, err := ParserHeader(ctx) //get header
-			if nil == err {             //has header
-				if err = ParseBody(ctx, reqBody); err == nil { //has body
-					resMsg, err = fn(h, reqBody)
+			// zlogger.Info("Parse header:", h, err)
+			defer func() {
+				SetHeader(ctx, h, err)
+				if nil != resMsg && nil == err {
+					ctx.Text(MarshalString(resMsg))
+				} else {
+					ctx.Text(err.Error())
 				}
+				// zlogger.Info("request ack with error:", err)
+			}()
+			if nil != err {
+				zlogger.Error("Iris api error in Parser Header:", err)
+				return
 			}
-			SetHeader(ctx, h, err)
-			if nil != resMsg {
-				ctx.Text(MarshalString(resMsg))
+			//has header
+			if err = ParseBody(ctx, reqBody); err != nil {
+				zlogger.Error("Iris api error in ParseBody:", err)
+				return
+			}
+			//has body
+			resMsg, err = fn(h, reqBody)
+			if nil != err {
+				zlogger.Error("Iris api error in fn:", err)
+				return
 			}
 		}
 		party.Post(cmd.Path, ctxFn)
 		party.Get(cmd.Path, ctxFn)
+		zlogger.Info("install api", pap.PartyUrl, cmd.Path)
 	}
 	return nil
 }
@@ -151,8 +170,12 @@ func CopyHeader(ctx znet.IrisCtx) {
 
 func ParseBody(ctx znet.IrisCtx, msg Message) error {
 	bs, err := ctx.GetBody()
+	// zlogger.Info("GetBody", bs, err)
 	if nil != err {
 		return err
+	}
+	if len(bs) == 0 {
+		return nil
 	}
 	return UnmarshalString(bs, msg)
 }

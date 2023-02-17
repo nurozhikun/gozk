@@ -18,6 +18,7 @@ const (
 	ErrCodeUserOrPassMiss
 	ErrCodeCmdUnexist
 	ErrCodeNullParam
+	ErrCodeWrongReqBody
 )
 
 var (
@@ -26,6 +27,7 @@ var (
 	ErrUserOrPassMiss = NewError(ErrCodeUserOrPassMiss, "the user isn't found or wrong password")
 	ErrCmdUnexist     = NewError(ErrCodeCmdUnexist, "the command is unexist")
 	ErrNullParam      = NewError(ErrCodeNullParam, "there are some null parameters")
+	ErrWrongReqBody   = NewError(ErrCodeWrongReqBody, "the request body is wrong")
 )
 
 func NewError(code int, s string) error {
