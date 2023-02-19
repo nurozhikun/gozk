@@ -18,6 +18,11 @@ type CfgRedis struct {
 	Password    string `ini:"password"`
 }
 
+type CfgServer struct {
+	AddrTcp string `ini:"addr_tcp"`
+	AddrUrl string `ini:"addr_url"`
+}
+
 type CfgDb struct{}
 
 func IniMapToCfg(cfg interface{}) error {
