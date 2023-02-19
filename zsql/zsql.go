@@ -12,8 +12,6 @@ import (
 	"gorm.io/gorm"
 )
 
-type Model = gorm.Model
-
 const (
 	TypeSqlite   = 0
 	TypeMysqlite = 1
