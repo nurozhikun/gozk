@@ -1,6 +1,6 @@
 module gitee.com/sienectagv/gozk
 
-go 1.14
+go 1.18
 
 require (
 	github.com/ajg/form v1.5.1 // indirect
@@ -8,6 +8,7 @@ require (
 	github.com/fasthttp-contrib/websocket v0.0.0-20160511215533-1f3b11f56072 // indirect
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/gomodule/redigo v1.7.1-0.20190724094224-574c33c3df38
+	github.com/gonutz/w32/v2 v2.7.0
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/imkira/go-interpol v1.1.0 // indirect
 	github.com/jmoiron/sqlx v1.3.4
@@ -26,6 +27,7 @@ require (
 	github.com/yudai/gojsondiff v1.0.0 // indirect
 	github.com/yudai/golcs v0.0.0-20170316035057-ecda9a501e82 // indirect
 	github.com/yudai/pp v2.0.1+incompatible // indirect
+	// golang.org/x/tools v0.8.0 // indirectj
 	google.golang.org/protobuf v1.27.1
 	gopkg.in/ini.v1 v1.51.1
 	gorm.io/driver/mysql v1.1.1

@@ -1,3 +1,11 @@
+/*
+ * @Author: wuzhikun zhikun.wu@firstack.com
+ * @Date: 2023-04-18 10:23:10
+ * @LastEditors: wuzhikun zhikun.wu@firstack.com
+ * @LastEditTime: 2023-04-18 16:58:21
+ * @Description:
+ * Copyright (c) 2023 by Firstack, All Rights Reserved.
+ */
 package zlogger
 
 import (
@@ -40,8 +48,9 @@ func InitLogPath(path string) {
 }
 
 func Error(e ...interface{}) {
-	_, file, line, _ := runtime.Caller(1)
-	fmt.Println(filepath.Base(file), "[ERROR]", line, e)
+	// _, file, line, _ := runtime.Caller(1)
+	// fmt.Println(filepath.Base(file), "[ERROR]", line, e)
+	errorLogger.Output(2, fmt.Sprintln(e...))
 }
 
 func Info(s ...interface{}) {
