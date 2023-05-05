@@ -1,9 +1,9 @@
-﻿package zcfg
+package zcfg
 
 import (
-	"gitee.com/sienectagv/gozk/zlogger"
-	"gitee.com/sienectagv/gozk/zsys"
-	"gitee.com/sienectagv/gozk/zutils"
+	"github.com/nurozhikun/gozk/zlogger"
+	"github.com/nurozhikun/gozk/zsys"
+	"github.com/nurozhikun/gozk/zutils"
 	"gopkg.in/ini.v1"
 )
 

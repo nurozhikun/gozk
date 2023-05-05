@@ -3,7 +3,7 @@ package zjwt
 import (
 	"testing"
 
-	"gitee.com/sienectagv/gozk/zjwt"
+	"github.com/nurozhikun/gozk/zjwt"
 )
 
 func TestJwtAll(t *testing.T) {

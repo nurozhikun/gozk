@@ -7,10 +7,10 @@ import (
 	"path"
 	"path/filepath"
 
-	"gitee.com/sienectagv/gozk/zarchive"
-	"gitee.com/sienectagv/gozk/zlogger"
-	"gitee.com/sienectagv/gozk/znet"
-	"gitee.com/sienectagv/gozk/zutils"
+	"github.com/nurozhikun/gozk/zarchive"
+	"github.com/nurozhikun/gozk/zlogger"
+	"github.com/nurozhikun/gozk/znet"
+	"github.com/nurozhikun/gozk/zutils"
 	"gopkg.in/ini.v1"
 )
 
@@ -116,7 +116,8 @@ func (ua *UpgradeApp) TryDownPackage() error {
 	}
 	current := &IniVersion{}
 	ini.StrictMapTo(current, ua.cfg.currentName())
-	if remote.Version <= current.Version || len(remote.Package) == 0 {
+	//直接比较不行
+	if /* remote.Version <= current.Version */ VersionCmp(remote.Version, current.Version) > 0 || len(remote.Package) == 0 {
 		zlogger.Info("No latest version!")
 		return zutils.ErrNotFound
 	}

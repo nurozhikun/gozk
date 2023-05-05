@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net"
 
-	"gitee.com/sienectagv/gozk/zdev/base"
+	"github.com/nurozhikun/gozk/zdev/base"
 )
 
 type StrmTcpListener struct {

@@ -1,4 +1,4 @@
-module gitee.com/sienectagv/gozk
+module github.com/nurozhikun/gozk
 
 go 1.18
 

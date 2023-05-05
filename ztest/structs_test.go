@@ -5,8 +5,8 @@ import (
 	"reflect"
 	"testing"
 
-	"gitee.com/sienectagv/gozk/zdev"
-	"gitee.com/sienectagv/gozk/zreflect"
+	"github.com/nurozhikun/gozk/zdev"
+	"github.com/nurozhikun/gozk/zreflect"
 )
 
 type Person struct {

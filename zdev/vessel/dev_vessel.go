@@ -4,11 +4,11 @@ package vessel
 import (
 	"time"
 
-	"gitee.com/sienectagv/gozk/zdev/base"
-	"gitee.com/sienectagv/gozk/zdev/custom"
-	"gitee.com/sienectagv/gozk/zlogger"
-	"gitee.com/sienectagv/gozk/zmap"
-	"gitee.com/sienectagv/gozk/zutils"
+	"github.com/nurozhikun/gozk/zdev/base"
+	"github.com/nurozhikun/gozk/zdev/custom"
+	"github.com/nurozhikun/gozk/zlogger"
+	"github.com/nurozhikun/gozk/zmap"
+	"github.com/nurozhikun/gozk/zutils"
 )
 
 const (

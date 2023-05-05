@@ -1,8 +1,8 @@
 package main
 
 import (
-	"gitee.com/sienectagv/gozk/zdev"
-	"gitee.com/sienectagv/gozk/zutils"
+	"github.com/nurozhikun/gozk/zdev"
+	"github.com/nurozhikun/gozk/zutils"
 )
 
 func main() {

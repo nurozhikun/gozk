@@ -3,7 +3,7 @@ package zreflect
 import (
 	"fmt"
 	"testing"
-	// "gitee.com/sienectagv/gozk/zreflect"
+	// "github.com/nurozhikun/gozk/zreflect"
 )
 
 type Person struct {

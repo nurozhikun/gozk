@@ -11,7 +11,7 @@ package main
 import (
 	"time"
 
-	"gitee.com/sienectagv/gozk/zutils"
+	"github.com/nurozhikun/gozk/zutils"
 	"github.com/gonutz/w32/v2"
 )
 

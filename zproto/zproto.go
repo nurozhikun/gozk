@@ -1,8 +1,8 @@
 package zproto
 
 import (
-	"gitee.com/sienectagv/gozk/znet"
 	"github.com/kataras/iris/v12"
+	"github.com/nurozhikun/gozk/znet"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protoreflect"

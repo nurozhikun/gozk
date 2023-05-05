@@ -1,7 +1,7 @@
 package zdev
 
 import (
-	"gitee.com/sienectagv/gozk/zdev/custom"
+	"github.com/nurozhikun/gozk/zdev/custom"
 )
 
 func NewCustomTcpListener(fnCreateConnCustom func() ICustom) ICustom {

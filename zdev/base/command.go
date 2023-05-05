@@ -1,6 +1,6 @@
 package base
 
-import "gitee.com/sienectagv/gozk/zreflect"
+import "github.com/nurozhikun/gozk/zreflect"
 
 func (c *Command) Make() *Command {
 	if c.BodyMap == nil {

@@ -1,7 +1,7 @@
 package base
 
 import (
-	"gitee.com/sienectagv/gozk/zmap"
+	"github.com/nurozhikun/gozk/zmap"
 )
 
 type (

@@ -4,9 +4,9 @@ import (
 	"reflect"
 	"sort"
 
-	"gitee.com/sienectagv/gozk/zmap"
-	"gitee.com/sienectagv/gozk/zsort"
-	"gitee.com/sienectagv/gozk/zstrings"
+	"github.com/nurozhikun/gozk/zmap"
+	"github.com/nurozhikun/gozk/zsort"
+	"github.com/nurozhikun/gozk/zstrings"
 )
 
 // type StructFields struct {

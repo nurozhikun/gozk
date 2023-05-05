@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"gitee.com/sienectagv/gozk/zlogger"
-	"gitee.com/sienectagv/gozk/zutils"
 	"github.com/jmoiron/sqlx"
+	"github.com/nurozhikun/gozk/zlogger"
+	"github.com/nurozhikun/gozk/zutils"
 	"gorm.io/gorm"
 )
 

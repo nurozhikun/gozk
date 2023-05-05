@@ -3,8 +3,8 @@ package zjwt
 import (
 	"time"
 
-	"gitee.com/sienectagv/gozk/zutils"
 	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/nurozhikun/gozk/zutils"
 	"github.com/pkg/errors"
 )
 

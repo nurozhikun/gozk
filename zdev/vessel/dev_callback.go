@@ -1,9 +1,9 @@
 package vessel
 
 import (
-	"gitee.com/sienectagv/gozk/zdev/base"
-	"gitee.com/sienectagv/gozk/zdev/custom"
-	"gitee.com/sienectagv/gozk/zdev/stream"
+	"github.com/nurozhikun/gozk/zdev/base"
+	"github.com/nurozhikun/gozk/zdev/custom"
+	"github.com/nurozhikun/gozk/zdev/stream"
 )
 
 type VesselCallback struct{}

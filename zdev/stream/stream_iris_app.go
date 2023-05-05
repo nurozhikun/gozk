@@ -3,10 +3,10 @@ package stream
 import (
 	stdctx "context"
 
-	"gitee.com/sienectagv/gozk/zdev/base"
-	"gitee.com/sienectagv/gozk/zlogger"
-	"gitee.com/sienectagv/gozk/zutils"
 	"github.com/kataras/iris/v12"
+	"github.com/nurozhikun/gozk/zdev/base"
+	"github.com/nurozhikun/gozk/zlogger"
+	"github.com/nurozhikun/gozk/zutils"
 )
 
 func NewStrmIrisApp(app *iris.Application) *StrmIrisApp {

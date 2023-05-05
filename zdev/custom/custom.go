@@ -1,7 +1,7 @@
 package custom
 
 import (
-	"gitee.com/sienectagv/gozk/zdev/base"
+	"github.com/nurozhikun/gozk/zdev/base"
 )
 
 type CustomBase struct {

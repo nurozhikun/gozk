@@ -3,10 +3,10 @@ package vessel
 import (
 	"time"
 
-	"gitee.com/sienectagv/gozk/zdev/base"
-	"gitee.com/sienectagv/gozk/zlogger"
-	"gitee.com/sienectagv/gozk/zmap"
-	"gitee.com/sienectagv/gozk/zsync"
+	"github.com/nurozhikun/gozk/zdev/base"
+	"github.com/nurozhikun/gozk/zlogger"
+	"github.com/nurozhikun/gozk/zmap"
+	"github.com/nurozhikun/gozk/zsync"
 )
 
 type virtualDevice struct {

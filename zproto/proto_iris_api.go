@@ -6,11 +6,11 @@ import (
 	"reflect"
 	"time"
 
-	"gitee.com/sienectagv/gozk/zlogger"
-	"gitee.com/sienectagv/gozk/znet"
-	"gitee.com/sienectagv/gozk/zproto/zpbf"
-	"gitee.com/sienectagv/gozk/zutils"
 	"github.com/kataras/iris/v12"
+	"github.com/nurozhikun/gozk/zlogger"
+	"github.com/nurozhikun/gozk/znet"
+	"github.com/nurozhikun/gozk/zproto/zpbf"
+	"github.com/nurozhikun/gozk/zutils"
 )
 
 type ProtoMethodHandler interface {

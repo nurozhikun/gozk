@@ -3,8 +3,8 @@ package custom
 import (
 	"net"
 
-	"gitee.com/sienectagv/gozk/zdev/base"
-	"gitee.com/sienectagv/gozk/zdev/stream"
+	"github.com/nurozhikun/gozk/zdev/base"
+	"github.com/nurozhikun/gozk/zdev/stream"
 )
 
 type CustomTcpListener struct {

@@ -3,8 +3,8 @@ package zmap
 import (
 	"sync/atomic"
 
-	"gitee.com/sienectagv/gozk/zsync"
-	"gitee.com/sienectagv/gozk/zutils"
+	"github.com/nurozhikun/gozk/zsync"
+	"github.com/nurozhikun/gozk/zutils"
 )
 
 // type Map struct {

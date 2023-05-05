@@ -3,7 +3,7 @@ package zmap
 import (
 	"sync"
 
-	"gitee.com/sienectagv/gozk/zutils"
+	"github.com/nurozhikun/gozk/zutils"
 )
 
 // type (

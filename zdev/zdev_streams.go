@@ -1,8 +1,8 @@
 package zdev
 
 import (
-	"gitee.com/sienectagv/gozk/zdev/stream"
 	"github.com/kataras/iris/v12"
+	"github.com/nurozhikun/gozk/zdev/stream"
 )
 
 func NewStreamTcpListener() IStream {

@@ -16,7 +16,7 @@ import (
 	"path"
 	"path/filepath"
 
-	"gitee.com/sienectagv/gozk/zlogger"
+	"github.com/nurozhikun/gozk/zlogger"
 )
 
 func UnzipToFolder(zipFileName, outFolder string) error {

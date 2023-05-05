@@ -4,7 +4,7 @@ import (
 	"io"
 	"net/http"
 
-	"gitee.com/sienectagv/gozk/zlogger"
+	"github.com/nurozhikun/gozk/zlogger"
 )
 
 func HttpGetFile(url string, fn func(body io.Reader)) error {

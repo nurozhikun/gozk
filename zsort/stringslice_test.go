@@ -3,7 +3,7 @@ package zsort
 import (
 	"fmt"
 	"testing"
-	// "gitee.com/sienectagv/gozk/zsort"
+	// "github.com/nurozhikun/gozk/zsort"
 )
 
 func TestStringSort(t *testing.T) {

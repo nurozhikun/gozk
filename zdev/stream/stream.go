@@ -1,7 +1,7 @@
 package stream
 
 import (
-	"gitee.com/sienectagv/gozk/zdev/base"
+	"github.com/nurozhikun/gozk/zdev/base"
 )
 
 type StrmCfgNet struct {
