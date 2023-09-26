@@ -2,8 +2,13 @@ package zutils
 
 import (
 	"fmt"
+	"os"
+	"os/signal"
 	"sync"
+	"syscall"
 	"time"
+
+	"github.com/nurozhikun/gozk/zlogger"
 )
 
 func WaitForEnter(s string) {
@@ -12,6 +17,23 @@ func WaitForEnter(s string) {
 		fmt.Printf("enter '%s' to exit the process...\n", s)
 		fmt.Scanln(&sRead)
 		if sRead == s {
+			break
+		}
+	}
+}
+
+func WaitForQuit() {
+	fmt.Printf("enter 'Ctrl+C' to exit the process...\n")
+	sc := make(chan os.Signal, 1)
+	signal.Notify(sc, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGKILL, syscall.SIGQUIT)
+	for s := range sc {
+		quit := false
+		switch s {
+		default:
+			quit = true
+			zlogger.Println("signal is", s)
+		}
+		if quit {
 			break
 		}
 	}
@@ -126,6 +148,11 @@ func (lg *LoopGroup) ExitLoop(key string) {
 
 func (lg *LoopGroup) WaitForEnter(enter string) {
 	WaitForEnter(enter)
+	lg.Wait()
+}
+
+func (lg *LoopGroup) WaitForQuit() {
+	WaitForQuit()
 	lg.Wait()
 }
 

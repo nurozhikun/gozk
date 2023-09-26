@@ -1,3 +1,11 @@
+/*
+ * @Author: wuzhikun zhikun.wu@firstack.com
+ * @Date: 2023-04-18 10:23:10
+ * @LastEditors: wuzhikun zhikun.wu@firstack.com
+ * @LastEditTime: 2023-09-25 14:13:28
+ * @Description:
+ * Copyright (c) 2023 by Firstack, All Rights Reserved.
+ */
 package zcfg
 
 import (
@@ -28,12 +36,12 @@ type CfgDb struct{}
 func IniMapToCfg(cfg interface{}) error {
 	defFile := zutils.RootFileExSuffix()
 	files := []interface{}{}
-	file := defFile + ".ini" //[appname].ini
+	file := defFile + "-user.ini" //{appname}-user.ini
 	// zlogger.Println(file)
 	if zsys.FileExist(file) {
 		files = append(files, file)
 	}
-	file = defFile + "-def.ini" //[appname]-def.ini
+	file = defFile + ".ini" //{appname}.ini
 	// zlogger.Println(file)
 	sections, err := ini.Load(file, files...)
 	if nil != err {
