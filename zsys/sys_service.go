@@ -2,13 +2,15 @@
  * @Author: wuzhikun zhikun.wu@firstack.com
  * @Date: 2024-06-20 16:00:56
  * @LastEditors: wuzhikun zhikun.wu@firstack.com
- * @LastEditTime: 2024-06-20 18:09:33
+ * @LastEditTime: 2024-06-21 13:40:58
  * @Description:
  * Copyright (c) 2024 by Firstack, All Rights Reserved.
  */
 package zsys
 
 import (
+	"os"
+
 	"github.com/kardianos/service"
 	"github.com/nurozhikun/gozk/zlogger"
 )
@@ -22,7 +24,7 @@ type Program struct {
 	// s   service.Service
 }
 
-func Start(p *Program) (err error) {
+func SvrWork(p *Program) (err error) {
 	sr := &svr{
 		p: p,
 	}
@@ -36,12 +38,42 @@ func Start(p *Program) (err error) {
 	if err != nil {
 		return
 	}
-	// if len(os.Args) > 1 {
-	// 	arg1 := os.Args[1]
-	// 	switch arg1 {
-	// 	case "install":
-	// 	}
-	// }
+	if len(os.Args) > 1 {
+		switch os.Args[1] {
+		case "install":
+			err = sr.s.Install()
+			if err != nil {
+				zlogger.Println(p.Name, "安装服务失败", err)
+			} else {
+				zlogger.Println(p.Name, "安装服务成功")
+			}
+			return
+		case "uninstall":
+			err = sr.s.Uninstall()
+			if err != nil {
+				zlogger.Println(p.Name, "卸载服务失败", err)
+			} else {
+				zlogger.Println(p.Name, "卸载服务成功")
+			}
+			return
+		case "start":
+			err = sr.s.Start()
+			if err != nil {
+				zlogger.Println(p.Name, "运行服务失败", err)
+			} else {
+				zlogger.Println(p.Name, "运行服务成功")
+			}
+			return
+		case "stop":
+			err = sr.s.Stop()
+			if err != nil {
+				zlogger.Println(p.Name, "停止服务失败", err)
+			} else {
+				zlogger.Println(p.Name, "停止服务成功")
+			}
+			return
+		}
+	}
 	err = sr.s.Run()
 	return
 }
