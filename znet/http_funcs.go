@@ -9,7 +9,9 @@
 package znet
 
 import (
+	"bytes"
 	"io"
+	"mime/multipart"
 	"net/http"
 	"net/url"
 	"os"
@@ -51,4 +53,21 @@ func HttpDownload(urlQuery, cachePath string) error {
 		_, err = io.Copy(file, body)
 	})
 	return err
+}
+
+func HttpUploadFilePost(urlQuery, fileName string) (*http.Response, error) {
+	file, err := os.Open(fileName)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	formFile, err := writer.CreateFormFile("file", fileName)
+	if err != nil {
+		return nil, err
+	}
+	io.Copy(formFile, file)
+	writer.Close()
+	return http.Post(urlQuery, writer.FormDataContentType(), body)
 }

@@ -46,11 +46,15 @@ func IniMapToCfg(cfg interface{}) error {
 	sections, err := ini.Load(file, files...)
 	if nil != err {
 		zlogger.Error(err)
-		return nil
+		return err
 	}
 	// tcfg := &Config{}
 	// sections.MapTo(tcfg)
 	// zlogger.Println(tcfg.Code)
-	sections.MapTo(cfg)
+	err = sections.MapTo(cfg)
+	if err != nil {
+		zlogger.Error(err)
+		return err
+	}
 	return nil
 }
